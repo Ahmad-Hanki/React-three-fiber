@@ -2,7 +2,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import "./App.css";
 import { useRef, useState } from "react";
 import { MeshWobbleMaterial, OrbitControls } from "@react-three/drei";
-
+import { useHelper } from "@react-three/drei";
+import { DirectionalLightHelper } from "three";
 //mesh renders any 3d objects
 //mesh needs geometry
 
@@ -33,8 +34,7 @@ const ToursKNot = ({ position, args, color }) => {
     <mesh position={position} ref={ref}>
       <torusKnotGeometry args={args} />
       {/* <meshStandardMaterial color={color} /> */}
-      <MeshWobbleMaterial factor={5} speed={2}/>
-
+      <MeshWobbleMaterial factor={5} speed={2} />
     </mesh>
   );
 };
@@ -90,27 +90,42 @@ const Cube = ({ position, size, color }) => {
     </mesh>
   );
 };
-function App() {
+
+const Scene = () => {
+  const directionalLightRef = useRef();
+
+  useHelper(directionalLightRef, DirectionalLightHelper , 0.5, 'white'); // size and color for the lighting
+
   return (
-    <Canvas>
-      <directionalLight position={[0, 0, 2]} intensity={0.5} />
-
+    <>
+      <directionalLight
+        position={[0, 0, 2]}
+        intensity={0.5}
+        ref={directionalLightRef}
+      />
       <ambientLight intensity={0.1} />
-
       {/* <Cube position={[2, 0, 0]} color={"lightblue"} size={[1, 1, 1]} /> */}
       {/* <Sphere position={[0, 0, 0]} color={"lightblue"} size={[1, 30, 30]} /> */}
       {/* <Tours
-        position={[-2, 0, 0]}
-        color={"lightblue"}
-        args={[0.8, 0.1, 30, 30]}
-      />
-      */}
+      position={[-2, 0, 0]}
+      color={"lightblue"}
+      args={[0.8, 0.1, 30, 30]}
+    />
+    */}
       <ToursKNot
         position={[0, 0, 0]}
         color={"lightblue"}
         args={[0.5, 0.1, 1000, 50]}
       />
-       <OrbitControls enableZoom={false} />  {/* Rotate around*/}
+      <OrbitControls enableZoom={false} /> {/* Rotate around*/}
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Canvas>
+      <Scene />
     </Canvas>
   );
 }
