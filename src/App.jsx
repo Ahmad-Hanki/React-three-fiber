@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import "./App.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 //mesh renders any 3d objects
 //mesh needs geometry
@@ -39,15 +39,31 @@ const ToursKNot = ({ position, args, color }) => {
 const Sphere = ({ position, size, color }) => {
   const ref = useRef();
 
+  const [isHovered, setIsHovered] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+
   useFrame((state, delta) => {
-    ref.current.rotation.x += delta;
-    ref.current.rotation.y += delta * 2;
-    ref.current.position.z = Math.sin(state.clock.elapsedTime);
+    ref.current.rotation.y = isHovered
+      ? (ref.current.rotation.y += delta * 1.2)
+      : (ref.current.rotation.y += delta * 0.2);
+    ref.current.position.z = Math.sin(state.clock.elapsedTime) * 0.2;
   });
   return (
-    <mesh position={position} ref={ref}>
+    <mesh
+    scale={isClicked? 3 : 1}
+      position={position}
+      ref={ref}
+      onPointerEnter={(event) => {
+        event.stopPropagation(); // make sure that when the mouse is inside the mesh the event is just contained in the mesh
+        setIsHovered(true);
+      }}
+      onPointerLeave={(event) => {
+        setIsHovered(false);
+      }}
+      onClick={() => setIsClicked((prev) => !prev)}
+    >
       <sphereGeometry args={size} />
-      <meshStandardMaterial color={color} wireframe/>
+      <meshStandardMaterial color={isHovered ? color : "pink"} wireframe />
     </mesh>
   );
 };
@@ -78,9 +94,9 @@ function App() {
 
       <ambientLight intensity={0.1} />
 
-      <Cube position={[2, 0, 0]} color={"lightblue"} size={[1, 1, 1]} />
+      {/* <Cube position={[2, 0, 0]} color={"lightblue"} size={[1, 1, 1]} /> */}
       <Sphere position={[0, 0, 0]} color={"lightblue"} size={[1, 30, 30]} />
-      <Tours
+      {/* <Tours
         position={[-2, 0, 0]}
         color={"lightblue"}
         args={[0.8, 0.1, 30, 30]}
@@ -89,7 +105,7 @@ function App() {
         position={[0, 2, 0]}
         color={"lightblue"}
         args={[0.5, 0.1, 1000, 50]}
-      />
+      /> */}
     </Canvas>
   );
 }
