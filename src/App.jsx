@@ -1,6 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import "./App.css";
 import { useRef, useState } from "react";
+import { MeshWobbleMaterial, OrbitControls } from "@react-three/drei";
 
 //mesh renders any 3d objects
 //mesh needs geometry
@@ -23,15 +24,17 @@ const Tours = ({ position, args, color }) => {
 const ToursKNot = ({ position, args, color }) => {
   const ref = useRef();
 
-  useFrame((state, delta) => {
-    ref.current.rotation.x += delta;
-    ref.current.rotation.y += delta * 2;
-    ref.current.position.z = Math.sin(state.clock.elapsedTime);
-  });
+  // useFrame((state, delta) => {
+  //   ref.current.rotation.x += delta;
+  //   ref.current.rotation.y += delta * 2;
+  //   ref.current.position.z = Math.sin(state.clock.elapsedTime);
+  // });
   return (
     <mesh position={position} ref={ref}>
       <torusKnotGeometry args={args} />
-      <meshStandardMaterial color={color} />
+      {/* <meshStandardMaterial color={color} /> */}
+      <MeshWobbleMaterial factor={5} speed={2}/>
+
     </mesh>
   );
 };
@@ -50,7 +53,7 @@ const Sphere = ({ position, size, color }) => {
   });
   return (
     <mesh
-    scale={isClicked? 3 : 1}
+      scale={isClicked ? 3 : 1}
       position={position}
       ref={ref}
       onPointerEnter={(event) => {
@@ -95,17 +98,19 @@ function App() {
       <ambientLight intensity={0.1} />
 
       {/* <Cube position={[2, 0, 0]} color={"lightblue"} size={[1, 1, 1]} /> */}
-      <Sphere position={[0, 0, 0]} color={"lightblue"} size={[1, 30, 30]} />
+      {/* <Sphere position={[0, 0, 0]} color={"lightblue"} size={[1, 30, 30]} /> */}
       {/* <Tours
         position={[-2, 0, 0]}
         color={"lightblue"}
         args={[0.8, 0.1, 30, 30]}
       />
+      */}
       <ToursKNot
-        position={[0, 2, 0]}
+        position={[0, 0, 0]}
         color={"lightblue"}
         args={[0.5, 0.1, 1000, 50]}
-      /> */}
+      />
+       <OrbitControls enableZoom={false} />  {/* Rotate around*/}
     </Canvas>
   );
 }
